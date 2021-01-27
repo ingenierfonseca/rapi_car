@@ -1,0 +1,40 @@
+[
+    {
+        "path":"http://www.hyundai.com.ni/img/media/gallery/3.1.jpg?v=90315",
+        "brand":"Hiundai",
+        "model":"Accent",
+        "passengers": 5,
+        "fuelType": "Gasolina",
+        "transmissionType": "Mecanico",
+        "engine": 1.8,
+        "paths":[
+            "http://www.hyundai.com.ni/img/media/gallery/3.1.jpg?v=90315",
+            "http://www.hyundai.com.ni/img/media/exterior/3.2.jpg?v=36060",
+            "http://www.hyundai.com.ni/img/media/interior/3.6.jpg?v=62951"
+        ],
+        "price":65.0,
+        "classification":9,
+        "available": true,
+        "city": "Managua",
+        "location": "12.129969, -86.260198"
+    },
+    {
+        "path":"https://www.suzuki.cr/public/images/modelos/alto-800/gallery/alto-800_04.jpg",
+        "brand":"Suzuki",
+        "model":"Alto",
+        "passengers": 5,
+        "fuelType": "Diesel",
+        "transmissionType": "Automatico",
+        "engine": 800.0,
+        "paths":[
+            "https://www.suzuki.cr/public/images/modelos/alto-800/gallery/alto-800_04.jpg",
+            "https://www.suzuki.cr/public/images/modelos/alto-800/gallery/alto-800_01.jpg",
+            "https://www.suzuki.cr/public/images/modelos/alto-800/gallery/alto-800_02.jpg"
+        ],
+        "price": 20.0,
+        "classification": 5,
+        "available": false,
+        "city": "Carazo",
+        "location": "11.850943, -86.199816"
+    }
+]
