@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rapi_car_app/core/providers/app_page_manager.dart';
 import 'package:rapi_car_app/core/services/car_service.dart';
-import 'package:rapi_car_app/src/models/car_model.dart';
+import 'package:rapi_car_app/core/services/auth_service.dart';
+import 'package:rapi_car_app/core/models/car.dart';
 import 'package:rapi_car_app/ui/components/button_app.dart';
 import 'package:rapi_car_app/ui/components/card_swiper.dart';
 import 'package:rapi_car_app/ui/components/text_field_custom.dart';
@@ -15,8 +16,8 @@ class CarRegisterView extends StatefulWidget {
   _CarRegisterViewState createState() => _CarRegisterViewState();
 }
 
-class _CarRegisterViewState extends State<CarRegisterView> {
-  CarModel car = CarModel();
+class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingObserver  {
+  Car car = Car();
 
   List<String> _transmissionTypeItems = ['Automatico', 'Mecanico'];
   List<String> _fuelTypeItems = ['Diesel', 'Gasolina'];
@@ -33,13 +34,36 @@ class _CarRegisterViewState extends State<CarRegisterView> {
   TextEditingController _locationController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    final carService = Provider.of<CarService>(context, listen: false);
+    if (carService.isEditOrNew) {
+      car = carService.car;
+    } else {
+      carService.isEditOrNew = true;
+      carService.car = car;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(final AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final carService = Provider.of<CarService>(context, listen: false);
+      car = carService.car;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
     final carService = Provider.of<CarService>(context, listen: false);
+    final userService = Provider.of<AuthService>(context, listen: false);
 
-    _countryController.text = '6010904b798009665cbed763';
-    _cityController.text = 'Managua';
+    _countryController.text = 'Nicaragua';
+    _cityController.text = 'Masaya';
     _locationController.text = '12.129969, -86.260198';
 
     return Scaffold(
@@ -57,6 +81,7 @@ class _CarRegisterViewState extends State<CarRegisterView> {
                   car.paths != null ? 
                   CardSwiper(
                     images: car.paths,
+                    isFile: !car.paths.contains(car.uui),
                   ) :
                   Container(
                     height: _screenSize.height * 0.3,
@@ -90,53 +115,65 @@ class _CarRegisterViewState extends State<CarRegisterView> {
                       ]
                 ),
                 margin: EdgeInsets.only(left: 20, right: 20, bottom: 40, top: 20),
-                child: Column(
+                child: Form(key: _formKey, child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Datos Públicos', style:TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 10),
-                    TextFieldCustom(placeHolder: 'Marca', textController: _brandController),
+                    TextFieldCustom(placeHolder: 'Marca', textController: _brandController, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Modelo', textController: _modelController),
+                    TextFieldCustom(placeHolder: 'Modelo', textController: _modelController, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Cantidad de personas', textController: _passengersController, keyboardType: TextInputType.number),
+                    TextFieldCustom(placeHolder: 'Cantidad de personas', textController: _passengersController, keyboardType: TextInputType.number, isValidator: true),
                     SizedBox(height: 20),
                     _dropDowList('Tipo de combustible', _fuelTypeItems, _fuelType),
                     SizedBox(height: 20),
                     _dropDowList('Tipo de transmision', _transmissionTypeItems, _transmissionType),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Motor', textController: _engineController, keyboardType: TextInputType.number),
+                    TextFieldCustom(placeHolder: 'Motor', textController: _engineController, keyboardType: TextInputType.number, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Pais', textController: _countryController),
+                    TextFieldCustom(placeHolder: 'Pais', textController: _countryController, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Ciudad', textController: _cityController),
+                    TextFieldCustom(placeHolder: 'Ciudad', textController: _cityController, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Ubicacion', textController: _locationController),
+                    TextFieldCustom(placeHolder: 'Ubicacion', textController: _locationController, isValidator: true),
                     SizedBox(height: 20),
-                    TextFieldCustom(placeHolder: 'Precio por dia', textController: _priceController, keyboardType: TextInputType.number),
+                    TextFieldCustom(placeHolder: 'Precio por dia', textController: _priceController, keyboardType: TextInputType.number, isValidator: true),
                     SizedBox(height: 20),
                   ]
                 )
-              ),
+              )),
               ButtonApp(text: 'Guardar', callback: carService.loading ? null :() async {
-                final response = await carService.create(
-                  _brandController.text.trim(), 
-                  _modelController.text.trim(), 
-                  int.parse(_passengersController.text.trim()), 
-                  _fuelType, 
-                  _transmissionType, 
-                  double.parse(_engineController.text.trim()), 
-                  double.parse(_priceController.text.trim()), 
-                  _countryController.text.trim(), 
-                  _cityController.text.trim(), 
-                  _locationController.text.trim(), 
-                  'paths'
-                );
+                if (_formKey.currentState.validate()) {
+                  final response = await carService.create(
+                    _brandController.text.trim(), 
+                    _modelController.text.trim(), 
+                    int.parse(_passengersController.text.trim()), 
+                    _fuelType, 
+                    _transmissionType, 
+                    double.parse(_engineController.text.trim()), 
+                    double.parse(_priceController.text.trim()), 
+                    _countryController.text.trim(), 
+                    _cityController.text.trim(), 
+                    _locationController.text.trim(), 
+                    'paths',
+                    userService.user.uui
+                  );
 
-                if (response) {
-                  //
-                } else {
-                  showAlert(context, 'Registro', 'Revise que los datos enviados sean correctos');
+                  if (response.ok) {
+                    car.uui = response.data.uui;
+                    if (car.paths != null) {
+                      for (var path in car.paths) {
+                        if (!path.contains(car.uui)) {
+                          await carService.sendImage(car.uui, path, false);
+                        }
+                      }
+                    }
+                    carService.isEditOrNew = false;
+                    context.pop();
+                  } else {
+                    showAlert(context, 'Registro', 'Revise que los datos enviados sean correctos');
+                  }
                 }
               })
             ],

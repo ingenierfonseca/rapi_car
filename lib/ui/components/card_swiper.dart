@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'dart:io';
 import 'package:flutter_swiper/flutter_swiper.dart';
-//import 'package:rapi_car_app/r.g.dart';
+import 'package:rapi_car_app/global/enviroment.dart';
 
 class CardSwiper extends StatelessWidget {
   final List<dynamic> images;
+  final bool isFile;
 
-  CardSwiper({ @required this.images });
+  CardSwiper({ @required this.images, this.isFile = false });
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +17,10 @@ class CardSwiper extends StatelessWidget {
       height: _screenSize.height * 0.4,
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
-          return Image.network(
-            images[index],
+          return !isFile ? Image.network(
+            '${Enviroment.carUrl}/${images[index]}',
             fit: BoxFit.fitWidth,
-          );
+          ) : Image.file(File(images[index]), fit: BoxFit.fitWidth);
         },
         itemWidth: 300,
         itemHeight: 200,

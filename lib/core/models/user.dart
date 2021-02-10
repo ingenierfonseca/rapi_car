@@ -13,21 +13,29 @@ class User {
         this.name,
         this.email,
         this.uui,
+        this.role,
+        this.photo
     });
 
     String name;
     String email;
     String uui;
+    String role;
+    String photo;
 
     factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
         email: json["email"],
         uui: json["uui"],
+        role: json["role"],
+        photo: json["photo"]
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
         "email": email,
         "uui": uui,
+        "role": role,
+        "photo": photo
     };
 }

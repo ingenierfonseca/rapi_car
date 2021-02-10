@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:rapi_car_app/core/providers/app_page_manager.dart';
+import 'package:rapi_car_app/core/services/car_service.dart';
 import 'package:rapi_car_app/ui/components/button_app.dart';
 import 'package:rapi_car_app/src/models/car_model.dart';
 
@@ -20,7 +23,21 @@ class _AddImageItemViewState extends State<AddImageItemView> {
   List<String> paths = List.from(['','','','','','','']);
 
   @override
+  void initState() {
+    super.initState();
+    final carService = Provider.of<CarService>(context, listen: false);
+    if (carService.car.paths != null) {
+      for (var i = 0; i < carService.car.paths.length; i++) {
+        paths[i] = carService.car.paths[i];
+        _images[i] = File(paths[i]);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final carService = Provider.of<CarService>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
           title: Text('Fotos de portada'),
@@ -63,7 +80,11 @@ class _AddImageItemViewState extends State<AddImageItemView> {
               ],
             ),
             SizedBox(height: 60),
-            ButtonApp(text: 'Guardar', callback: (){})
+            ButtonApp(text: 'Guardar', callback: () {
+              paths.removeWhere((element) => element.trim().length == 0);
+              carService.car.paths = paths;
+              context.pop();
+            })
           ],
         ),
       ),

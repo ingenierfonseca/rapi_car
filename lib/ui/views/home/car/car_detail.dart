@@ -151,7 +151,7 @@ class _CarDetailState extends State<CarDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Ubicación', style:TextStyle(color: Colors.white)),
-                  Text('${_car.cityId}, Aproximadamente a ${distance} Km', style:TextStyle(color: Colors.white))
+                  Text('${_car.city}, Aproximadamente a ${distance} Km', style:TextStyle(color: Colors.white))
                 ],
               )
             ),

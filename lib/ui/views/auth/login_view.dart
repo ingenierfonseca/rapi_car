@@ -48,7 +48,7 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: true);
 
     return Container(
       margin: EdgeInsets.only(top: 40),

@@ -9,6 +9,8 @@ import 'package:rapi_car_app/r.g.dart';
 import 'package:rapi_car_app/ui/views/home/dashboard_pages/filter_map_view.dart';
 import 'package:rapi_car_app/ui/views/permission/access_gps_view.dart';
 
+import 'package:rapi_car_app/global/enviroment.dart';
+
 class DashboardApp extends StatefulWidget {
   static const String id = 'dashboard_app';
 
@@ -53,7 +55,7 @@ class _DashboardAppState extends State<DashboardApp> {
 
     return Scaffold(
       backgroundColor: Color(0xffF2F2F2),
-      body:Container(
+      body: SafeArea(child:Container(
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
@@ -69,7 +71,7 @@ class _DashboardAppState extends State<DashboardApp> {
           ],
         )
       )      
-    );
+    ));
   }
 
   Widget _containerFiltersWidget() {
@@ -166,7 +168,9 @@ class _DashboardAppState extends State<DashboardApp> {
               child: FadeInImage(
                 height: screenSize.height * 0.3,
                 width: screenSize.width,
-                image: NetworkImage(data.paths[0]),
+                image: data.paths != null && data.paths.length > 0
+                  ? NetworkImage('${Enviroment.carUrl}/${data.paths[0]}')
+                  : R.image.no_image_jpg(),
                 placeholder: R.image.loading_gif(),
                 fit: BoxFit.fill,
               ) 
@@ -182,7 +186,7 @@ class _DashboardAppState extends State<DashboardApp> {
                     Text('${data.model}', 
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)
                     ),
-                    Text('${data.cityId}, ${data.countryId}', style: TextStyle(fontSize: 13, ),),
+                    Text('${data.city.name}, ${data.country.name}', style: TextStyle(fontSize: 13, ),),
                     Row(
                       children: [
                         Icon(Icons.star, size: 13, color: Colors.red),
