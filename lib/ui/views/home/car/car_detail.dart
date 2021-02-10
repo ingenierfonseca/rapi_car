@@ -73,9 +73,9 @@ class _CarDetailState extends State<CarDetail> {
               SizedBox(height: 5),
               Text(data.model, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 5),
-              Text('Capacidad ${_car.passengers} pasajeros'),
-              Text('Combustible ${_car.fuelType}'),
-              Text('Tramsmisión ${_car.transmissionType}'),
+              Text('${_car.passengers} pasajeros'),
+              Text('${_car.fuelType}'),
+              Text('${_car.transmissionType}'),
               Text('Motor ${_car.engine}'),
               SizedBox(height: 5),
               clasificationWidget(data.classification)
@@ -114,7 +114,7 @@ class _CarDetailState extends State<CarDetail> {
   Widget _priceWidget() {
     return Container(
       //width: 100,
-      padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+      padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
       margin: EdgeInsets.only(bottom: 10, left: 30),
       decoration: BoxDecoration(
         color: Colors.white,

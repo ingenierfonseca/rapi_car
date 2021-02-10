@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rapi_car_app/core/services/auth_service.dart';
 import 'package:rapi_car_app/core/services/app_service.dart';
+import 'package:rapi_car_app/core/services/car_service.dart';
 import 'package:rapi_car_app/r.g.dart';
 import 'package:rapi_car_app/core/providers/app_page_manager.dart';
 import 'package:rapi_car_app/ui/views/home/car/car_register_view.dart';
@@ -65,14 +66,20 @@ class DrawerApp extends StatelessWidget {
             icon: Icons.format_align_left, 
             text: 'Registrar Vehículo', 
             onTap: () {
-              Navigator.of(context).pop(); context.push(page: CarRegisterView());
+              final carService = Provider.of<CarService>(context, listen: false);
+              carService.car = null;
+              carService.loading = false;
+              carService.isEditOrNew = false;
+              Navigator.of(context).pop(); 
+              context.push(page: CarRegisterView());
             }
           ),
           _createDrawerItem(
             icon: Icons.format_align_left, 
             text: 'Mis Vehículos', 
             onTap: () {
-              Navigator.of(context).pop(); context.push(page: CarRegisterView());
+              Navigator.of(context).pop(); 
+              context.push(page: CarRegisterView());
             }
           )
         ]

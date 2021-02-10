@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:image/image.dart' as Img;
 import 'package:rapi_car_app/core/models/response/cars_all_response.dart';
 import 'package:rapi_car_app/core/models/response/car_response.dart';
 import 'package:rapi_car_app/core/services/app_service.dart';
@@ -69,10 +70,11 @@ class CarService with ChangeNotifier, AppService {
   }
 
   Future<bool> sendImage(String id, String filename, bool isDelete) async {
-    loading = true;
-
     final token = await AppService.getToken();
     File file = File(filename);
+
+    Img.Image image_temp = Img.decodeImage(file.readAsBytesSync());
+    Img.Image image_resize = Img.copyResize(image_temp, width: 800);
     
     ///MultiPart request
     var request = http.MultipartRequest(
@@ -85,11 +87,11 @@ class CarService with ChangeNotifier, AppService {
     };
 
     request.files.add(
-        http.MultipartFile(
+        http.MultipartFile.fromBytes(
            'file',
-            file.readAsBytes().asStream(),
-            file.lengthSync(),
-            filename: filename,
+            Img.encodeJpg(image_resize),//file.readAsBytes().asStream(),
+            //file.lengthSync(),
+            filename: 'resized_image.jpg'//filename,
           //contentType: MediaType('image','jpeg'),
         ),
     );
@@ -103,7 +105,6 @@ class CarService with ChangeNotifier, AppService {
 
     final resp = await request.send();
     
-    loading = false;
     if (resp.statusCode == 200) {
       return true;
     } else {

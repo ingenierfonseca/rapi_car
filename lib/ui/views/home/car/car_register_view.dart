@@ -9,6 +9,7 @@ import 'package:rapi_car_app/ui/components/card_swiper.dart';
 import 'package:rapi_car_app/ui/components/text_field_custom.dart';
 import 'package:rapi_car_app/ui/util/helpers/helpers.dart';
 import 'package:rapi_car_app/ui/views/home/car/add_image_item_view.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class CarRegisterView extends StatefulWidget {
 
@@ -46,6 +47,47 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
       carService.isEditOrNew = true;
       carService.car = car;
     }
+
+    _brandController.text = carService.car.brand;
+    _modelController.text = carService.car.model ?? '';
+    _passengersController.text = carService.car.passengers != null ? carService.car.passengers.toString() : '';
+    _engineController.text = carService.car.engine != null ? carService.car.engine.toString() : '';
+    _countryController.text = carService.car.country != null ? carService.car.country.name : '';
+    _cityController.text = carService.car.city != null ? carService.car.city.name : '';
+    _locationController.text = carService.car.location;
+    _priceController.text = carService.car.price != null ? carService.car.price.toString() : '';
+
+    _brandController.addListener(() {
+      carService.car.brand = _brandController.text;
+    });
+
+    _modelController.addListener(() {
+      carService.car.model = _modelController.text;
+    });
+
+    _passengersController.addListener(() {
+      carService.car.passengers = int.parse(_passengersController.text);
+    });
+
+    _engineController.addListener(() {
+      carService.car.engine = double.parse(_engineController.text);
+    });
+
+    _countryController.addListener(() {
+      carService.car.country.id = _countryController.text;
+    });
+
+    _cityController.addListener(() {
+      carService.car.city.id = _cityController.text;
+    });
+
+    _locationController.addListener(() {
+      carService.car.location = _locationController.text;
+    });
+
+    _priceController.addListener(() {
+      carService.car.price = int.parse(_priceController.text);
+    });
   }
 
   @override
@@ -57,9 +99,29 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
   }
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _brandController.dispose();
+    _modelController.dispose();
+    _passengersController.dispose();
+    _engineController.dispose();
+    _countryController.dispose();
+    _cityController.dispose();
+    _locationController.dispose();
+    _priceController.dispose();
+
+    final carService = Provider.of<CarService>(context, listen: false);
+    carService.car = null;
+    carService.loading = false;
+    carService.isEditOrNew = false;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
-    final carService = Provider.of<CarService>(context, listen: false);
+    final carService = Provider.of<CarService>(context, listen: true);
     final userService = Provider.of<AuthService>(context, listen: false);
 
     _countryController.text = 'Nicaragua';
@@ -71,7 +133,10 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
           title: Text('Registro de Vehículo'),
           backgroundColor: Colors.black
         ),
-        body: SingleChildScrollView(
+        body: ModalProgressHUD(
+        inAsyncCall: carService.loading,
+        progressIndicator: CircularProgressIndicator(),
+        child:SingleChildScrollView(
         child:Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +162,6 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
                     bottom: _screenSize.height * 0.01,
                     right: 0,
                   )
-                  
                 ],
               ),
               Container(
@@ -115,7 +179,7 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
                       ]
                 ),
                 margin: EdgeInsets.only(left: 20, right: 20, bottom: 40, top: 20),
-                child: Form(key: _formKey, child: Column(
+                child:Form(key: _formKey, child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Datos Públicos', style:TextStyle(fontWeight: FontWeight.bold)),
@@ -144,6 +208,11 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
                 )
               )),
               ButtonApp(text: 'Guardar', callback: carService.loading ? null :() async {
+                /*if (car.paths != null) {
+                      for (var path in car.paths) {
+                          await carService.sendImage('60233aee3b019620b87823b2', path, false);
+                      }
+                    }*/
                 if (_formKey.currentState.validate()) {
                   final response = await carService.create(
                     _brandController.text.trim(), 
@@ -161,6 +230,7 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
                   );
 
                   if (response.ok) {
+                    carService.loading = true;
                     car.uui = response.data.uui;
                     if (car.paths != null) {
                       for (var path in car.paths) {
@@ -170,6 +240,7 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
                       }
                     }
                     carService.isEditOrNew = false;
+                    carService.loading = false;
                     context.pop();
                   } else {
                     showAlert(context, 'Registro', 'Revise que los datos enviados sean correctos');
@@ -179,7 +250,7 @@ class _CarRegisterViewState extends State<CarRegisterView> with WidgetsBindingOb
             ],
           )
         )),
-      );
+      ));
   }
 
   Widget _dropDowList(String label, List<String> listData, String valueChange) {
