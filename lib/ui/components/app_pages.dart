@@ -1,12 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:pagobiccos/core/models/db/account.dart';
-//import 'package:pagobiccos/src/pages/components/bottom_nav_bar_item_page.dart';
 import 'package:rapi_car_app/ui/components/no_app_bar.dart';
 import 'package:rapi_car_app/core/providers/app_page_manager.dart';
-//import 'package:pagobiccos/ui/res/colors.dart';
 import 'package:provider/provider.dart';
-//import 'package:pagobiccos/ui/util/screen_util.dart';
 
 class AppPages extends StatefulWidget {
   final Function onWillPop;
@@ -14,7 +10,6 @@ class AppPages extends StatefulWidget {
   final CupertinoNavigationBar appBar;
   final Widget body;
   final dynamic arguments;
-  //final List<BottomNavBarItemPage> bottomNavItemsPage;
   final bool isPesosFacil;
 
   AppPages({
@@ -23,7 +18,6 @@ class AppPages extends StatefulWidget {
     this.appBar,
     @required this.body,
     this.arguments,
-    //this.bottomNavItemsPage,
     this.isPesosFacil = false,
   });
 
@@ -55,34 +49,6 @@ class _AppPagesState extends State<AppPages> {
               appBar: manager.appBar,
               body: manager.lastPage,
             ),
-            /*bottomNavigationBar: Visibility(
-              visible: true,
-              child: Visibility(
-                visible: manager.showBottomNav,
-                child: BottomNavigationBar(
-                  backgroundColor: context.select((Account a) => a.pesosMode)
-                      ? kBottomNavColorPesos
-                      : kBottomNavColor,
-                  selectedItemColor: (manager.currentBottomNavItem >= 0)
-                      ? Colors.white
-                      : Colors.white70,
-                  unselectedItemColor: Colors.white70,
-                  selectedFontSize: (manager.currentBottomNavItem >= 0)
-                      ? 14.0.sf()
-                      : 12.0.sf(),
-                  unselectedFontSize: 12.0.sf(),
-                  type: BottomNavigationBarType.fixed,
-                  currentIndex: (manager.currentBottomNavItem > 0)
-                      ? manager.currentBottomNavItem
-                      : 0,
-                  onTap: (index) => context.pushReplacement(
-                      page: widget.bottomNavItemsPage[index].page,
-                      menuItemId: index),
-                  items:
-                      widget.bottomNavItemsPage.map((ip) => ip.item).toList(),
-                ),
-              ),
-            ),*/
           ),
         );
       },

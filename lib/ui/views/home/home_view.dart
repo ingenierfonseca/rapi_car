@@ -3,9 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rapi_car_app/core/providers/payment_provider.dart';
 import 'package:rapi_car_app/core/providers/context_exts.dart';
+import 'package:rapi_car_app/core/services/car_service.dart';
 import 'package:rapi_car_app/ui/components/app_pages.dart';
 import 'package:rapi_car_app/ui/components/drawer_app.dart';
-import 'package:rapi_car_app/ui/viewmodels/user_view_model.dart';
+import 'package:rapi_car_app/ui/components/main_view_widgets.dart' as main_components;
 
 import 'package:provider/provider.dart';
 import 'package:rapi_car_app/ui/views/home/dashboard_pages/dashboard_app.dart';
@@ -20,65 +21,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin {
   String argument = '';
   Widget page;
-  Timer _timer, _timerOut;
-
-  @override
-  void initState() {
-    super.initState();
-    _initTimer();
-  }
-
-  void _initTimer() {
-    _timerOut?.cancel();
-    _timerOut = null;
-
-    _timer?.cancel();
-
-    _timer = Timer(const Duration(minutes: 5), () => _askForMoreTime());
-  }
-
-  void _askForMoreTime() async {
-    _timer?.cancel();
-    _timer = null;
-
-    if (_timerOut != null) {
-      _timerOut.cancel();
-    }
-    _timerOut = Timer(const Duration(minutes: 1), () {
-      UserViewModel().logout();
-      //locator<DialogService>().dismissDialog();
-      //context.pushReplacementView(view: LoginView.id);
-    });
-
-    /*await locator<DialogService>().showAlertDialog(
-      title: 'Tu tiempo de sesión va expirar',
-      message: '¿Necesitas mas tiempo?',
-      positiveText: 'Continuar',
-      postiveAction: (context) {
-        _initTimer();
-      },
-      negativeText: 'Salir',
-      negativeAction: (ctx) async {
-        UserViewModel().logout();
-        context.pushReplacementView(view: LoginView.id);
-      },
-    );*/
-  }
-
-  void _handleUserInteraction([_]) {
-    if (!_timer.isActive) {
-      return;
-    }
-    _timer?.cancel();
-    _initTimer();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _timerOut?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,11 +29,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         ? context.arguments()
         : DashboardApp();
 
-    return GestureDetector(
-      onTap: _handleUserInteraction,
-      onPanDown: _handleUserInteraction,
-      child: _generateScaffold(),
-    );
+    return _generateScaffold();
   }
 
   Widget _generateScaffold() {
@@ -101,7 +39,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
           return AppPages(
             onWillPop: _onWillPop,
             drawer: DrawerApp(),
-            //appBar: NoAppBar(),
+            appBar: main_components.generarCupertinoNavBar(context),
             body: page,
             arguments: argument,
           );

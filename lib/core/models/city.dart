@@ -12,6 +12,10 @@ class City {
         name: json["name"],
     );
 
+    factory City.fromJsonEdit(String json) => City(
+        id: json
+    );
+
     Map<String, dynamic> toJson() => {
         "_id": id,
         "name": name,

@@ -14,7 +14,7 @@ class CardSwiper extends StatelessWidget {
     final _screenSize =   MediaQuery.of(context).size;
 
     return Container(
-      height: _screenSize.height * 0.4,
+      height: _screenSize.height * 0.3,
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
           return !isFile ? Image.network(

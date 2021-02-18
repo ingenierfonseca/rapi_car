@@ -13,58 +13,88 @@ import 'package:rapi_car_app/core/models/car.dart';
 class CarService with ChangeNotifier, AppService {
   bool _loading = false;
   bool _isEditOrNew = false;
+  bool _update = false;
+  int _currentPage = 0;
+  List<Car> listData = [];
   Car car = null;
 
   bool get loading => this._loading;
-  
   set loading(bool value) {
     this._loading = value;
     notifyListeners();
   }
 
   bool get isEditOrNew => this._isEditOrNew;
-  
   set isEditOrNew(bool value) {
     this._isEditOrNew = value;
     notifyListeners();
   }
 
-  Future<CarResponse> create(String brand, String model, int passengers, String fuelType,
-    String transmissionType, double engine, double price, String country_id, String city_id,
-    String location, String paths, String user_id
-  ) async {
+  int get currentPage => this._currentPage;
+  set currentPage(int value) {
+    this._currentPage = value;
+    notifyListeners();
+  }
+
+  bool get update => this._update;
+  set update(bool value) {
+    this._update = value;
+  }
+
+  Future<CarResponse> create(Car car) async {
     loading = true;
 
-    final data = {
-      "brand": brand,
-      "model": model,
-      "passengers": passengers,
-      "fuelType": fuelType,
-      "transmissionType": transmissionType,
-      "engine": engine,
-      "price": price,
-      "country": '602309bac41c0953e41b1feb',//country_id,
-      "city": '60230b4c244b1a22207cede4',//city_id,
-      "user": user_id,
-      "location": location
-    };
+    try {
+      final token = await AppService.getToken();
+      final data = car.toJson();
 
-    final token = await AppService.getToken();
-
-    final resp = await http.post('${Enviroment.apiUrl}/car/',
-      body: jsonEncode(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
+      final resp = await http.post('${Enviroment.apiUrl}/car/',
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+      );
+      
+      loading = false;
+      if (resp.statusCode == 200) {
+        final carResponse = carResponseFromJson(resp.body);
+        car.uui = carResponse.data.uui;
+        return carResponse;
+      } else {
+        return CarResponse(ok: false);
       }
-    );
-    
-    loading = false;
-    if (resp.statusCode == 200) {
-      final carResponse = carResponseFromJson(resp.body);
-      car.uui = carResponse.data.uui;
-      return carResponse;
-    } else {
+    } catch (ex) {
+      loading = false;
+      return CarResponse(ok: false);
+    }
+  }
+
+  Future<CarResponse> edit(Car car) async {
+    loading = true;
+
+    try {
+      final token = await AppService.getToken();
+      final data = car.toJson();
+
+      final resp = await http.put('${Enviroment.apiUrl}/car/',
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+      );
+      
+      loading = false;
+      if (resp.statusCode == 200) {
+        final carResponse = carResponseFromJsonEdit(resp.body);
+        car.uui = carResponse.data.uui;
+        return carResponse;
+      } else {
+        return CarResponse(ok: false);
+      }
+    } catch (ex) {
+      loading = false;
       return CarResponse(ok: false);
     }
   }
@@ -112,10 +142,39 @@ class CarService with ChangeNotifier, AppService {
     }
   }
 
-  Future<CarAllResponse> getAll({String page = '1'}) async {
+  Future<CarAllResponse> getAll({String page = '1', Map<String, dynamic> filters}) async {
+    loading = true;
     final token = await AppService.getToken();
 
-    final resp = await http.get('${Enviroment.apiUrl}/car?page=$page',
+    try {
+      final resp = await http.get('${Enviroment.apiUrl}/car?page=$page',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'filters': jsonEncode(filters)
+        },
+      );
+      print(resp.body);
+      if (resp.statusCode == 200) {
+        final carResponse = carAllResponseFromJson(resp.body);
+
+        return carResponse;
+      } else {
+        return CarAllResponse(
+          ok: false
+        );
+      }
+    } catch(e) {
+      return CarAllResponse(
+        ok: false
+      );
+    }
+  }
+
+  Future<CarAllResponse> getUserAll(String id, {String page = '1'}) async {
+    final token = await AppService.getToken();
+
+    final resp = await http.get('${Enviroment.apiUrl}/user/$id/car?page=$page',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'

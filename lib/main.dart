@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:rapi_car_app/core/services/auth_service.dart';
 import 'package:rapi_car_app/core/services/car_service.dart';
+import 'package:rapi_car_app/core/services/config_service.dart';
 import 'package:rapi_car_app/core/services/stripe_service.dart';
 import 'package:rapi_car_app/di/locator.dart';
 import 'package:rapi_car_app/r.g.dart';
@@ -54,6 +56,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     precacheImage(R.image.no_image_jpg(), context);
     StripeService()..init();
+    FlutterStatusbarcolor.setStatusBarColor(Colors.black);
     return MultiProvider(
       providers: [
         /*StreamProvider(
@@ -64,7 +67,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => MapBloc()),
         BlocProvider(create: (_) => PaymentBloc()),
         ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => CarService())
+        ChangeNotifierProvider(create: (_) => CarService()),
+        ChangeNotifierProvider(create: (_) => ConfigService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

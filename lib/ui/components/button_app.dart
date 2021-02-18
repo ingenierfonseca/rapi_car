@@ -28,7 +28,7 @@ class ButtonApp extends StatelessWidget {
                 color: Colors.white,
                 letterSpacing: 3,
                 fontSize: 14,
-                //fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold,
                 //fontFamily: R.fontFamily.sFProDisplay,
               ),
             )

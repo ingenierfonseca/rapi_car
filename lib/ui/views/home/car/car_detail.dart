@@ -32,31 +32,32 @@ class _CarDetailState extends State<CarDetail> {
   Widget build(BuildContext context) {
     final _screenSize =   MediaQuery.of(context).size;
 
-    return Scaffold(
-        /*appBar: AppBar(
-          title: Text('${_car.brand} ${_car.model}'),
-          backgroundColor: Colors.black
-        ),*/
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _swiperTargets(_car),
-                _itemInfo(_car),
-                _mapLocation(_screenSize),
-                Divider(color: Colors.black, height: 20),
-                ButtonApp(text: _car.available ? 'Reservar' : 'Reservado', isActive: _car.available, callback: ()=> _car.available ? context.push(page: PaymentView()) : {})
-              ],
-            )
-          )
-        ),
-      );
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _swiperTargets(_car),
+          _itemInfo(_car),
+          _mapLocation(_screenSize),
+          _comment(),
+          Divider(color: Colors.black, height: 20),
+          ButtonApp(
+            text: _car.available ? 'Rentar Ahora' : 'Rentado', 
+            isActive: _car.available, 
+            callback: ()=> _car.available ? context.push(page: PaymentView()) : {})
+        ],
+      )
+    );
   }
 
   Widget _swiperTargets(Car data) {
-      return CardSwiper(
+    final _screenSize =   MediaQuery.of(context).size;
+      return data.paths.length > 0 ? CardSwiper(
         images: data.paths,
+      ) : Container (
+        height: _screenSize.height * 0.3,
+        color: Colors.grey[300],
+        child: Center(child: Icon(Icons.camera_alt, size: 100, color: Colors.white)),
       );
   }
 
@@ -78,7 +79,25 @@ class _CarDetailState extends State<CarDetail> {
               Text('${_car.transmissionType}'),
               Text('Motor ${_car.engine}'),
               SizedBox(height: 5),
-              clasificationWidget(data.classification)
+              clasificationWidget(data.classification),
+              Row(
+                children: [
+                  Text('Aire acondicionado'),
+                  _car.airConditioner ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Reproductor de musica'),
+                  _car.musicPlayer ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Bluetooth'),
+                  _car.bluetooth ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
+                ],
+              )
               /*Row(
                 children: [
                   for(var i = 0; i < data.classification; i++){
@@ -151,7 +170,7 @@ class _CarDetailState extends State<CarDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Ubicación', style:TextStyle(color: Colors.white)),
-                  Text('${_car.city}, Aproximadamente a ${distance} Km', style:TextStyle(color: Colors.white))
+                  Text('${_car.city.name}, Aproximadamente a ${distance} Km', style:TextStyle(color: Colors.white))
                 ],
               )
             ),
@@ -230,5 +249,38 @@ class _CarDetailState extends State<CarDetail> {
         ]
       )
     );*/
+  }
+
+  Widget _comment() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white
+      ),
+      margin: EdgeInsets.only(left: 30, right: 30),
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: FadeInImage(
+                  image: NetworkImage('https://avatars.githubusercontent.com/u/16735800?s=460&u=c7b12bcf27536fb5bef9c880aaa17d4b0c7ff45d&v=4'),
+                  placeholder: R.image.loading_gif(),
+                  fit: BoxFit.fill,
+                  height: 40,
+                ) 
+              ),
+              SizedBox(width: 10),
+              Text('ingenierfonseca@gmail.com', style: TextStyle(fontWeight: FontWeight.bold))
+            ],
+          ),
+          SizedBox(height: 10),
+          Text('Super, no los cambio, siempre alquilo ahí, muy responsables. Alquilo en Puerto Rico, y cuando viajo alquilo en Tampa, en la Florida. GRACIAS')
+        ],
+      ),
+    );
   }
 }

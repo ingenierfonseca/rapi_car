@@ -2,26 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rapi_car_app/core/services/auth_service.dart';
 import 'package:rapi_car_app/core/services/app_service.dart';
-import 'package:rapi_car_app/core/services/car_service.dart';
 import 'package:rapi_car_app/r.g.dart';
 import 'package:rapi_car_app/core/providers/app_page_manager.dart';
-import 'package:rapi_car_app/ui/views/home/car/car_register_view.dart';
+import 'package:rapi_car_app/ui/views/home/car/bussines_car_view.dart';
 
 import 'package:rapi_car_app/global/enviroment.dart';
 
-class DrawerApp extends StatelessWidget {
+class DrawerApp extends StatefulWidget {
+  @override
+  _DrawerAppState createState() => _DrawerAppState();
+}
+
+class _DrawerAppState extends State<DrawerApp> {
   final List<String> bussinessRoles = ['ADMIN_ROLE', 'BUSSINESS_ROLE']; 
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: true);
+    return _buildDrawer(context);
+  }
 
+  Widget _buildDrawer(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: true);
+    
     return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
       child: ListView(
-        // Important: Remove any padding from the ListView.
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -39,11 +43,11 @@ class DrawerApp extends StatelessWidget {
                   ) 
                 ),
                 SizedBox(height: 10),
-                Text('Marlon Fonseca', style: TextStyle(fontWeight: FontWeight.bold))
+                Text('${authService.user.name} ${authService.user.last_name}', style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
-          _createDrawerItem(icon: Icons.home, text: 'Inicio'),
+          _createDrawerItem(icon: Icons.home, text: 'Inicio', onTap: () => context.pop()),
           
           _bussinessWidget(bussinessRoles.contains(authService.user.role), context),
           
@@ -64,24 +68,20 @@ class DrawerApp extends StatelessWidget {
         children: [
           _createDrawerItem(
             icon: Icons.format_align_left, 
-            text: 'Registrar Vehículo', 
+            text: 'Mi cuenta de negocio', 
             onTap: () {
-              final carService = Provider.of<CarService>(context, listen: false);
-              carService.car = null;
-              carService.loading = false;
-              carService.isEditOrNew = false;
               Navigator.of(context).pop(); 
-              context.push(page: CarRegisterView());
+              context.push(page: BussinessCarView());
             }
           ),
-          _createDrawerItem(
+          /*_createDrawerItem(
             icon: Icons.format_align_left, 
             text: 'Mis Vehículos', 
             onTap: () {
               Navigator.of(context).pop(); 
               context.push(page: CarRegisterView());
             }
-          )
+          )*/
         ]
       );
     }

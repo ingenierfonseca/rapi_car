@@ -146,4 +146,6 @@ extension BiccosPageExtesion on BuildContext {
   T getViewModel<T extends ViewModel>() => read<AppPageManager>().viewModel;
 
   void dispose() => read<AppPageManager>()._disposePage();
+
+  void openDrawer() => Scaffold.of(this).openDrawer();
 }

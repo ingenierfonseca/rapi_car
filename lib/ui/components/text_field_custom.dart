@@ -5,6 +5,7 @@ class TextFieldCustom extends StatelessWidget {
   final String placeHolder;
   final TextEditingController textController;
   final TextInputType keyboardType;
+  final bool enabled;
   final bool isPassword;
   final bool isValidator;
 
@@ -15,12 +16,14 @@ class TextFieldCustom extends StatelessWidget {
     @required this.textController,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
-    this.isValidator = false
+    this.isValidator = false,
+    this.enabled = true
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled,
       keyboardType: keyboardType,
       validator: (value) {
         if (isValidator && value.isEmpty) {
