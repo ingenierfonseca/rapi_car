@@ -49,7 +49,9 @@ flutter:
   - assets/images/car-door.png
   - assets/images/loading.gif
   - assets/images/location_mark.png
+  - assets/images/master_card.svg
   - assets/images/no-image.jpg
+  - assets/images/visa_card.svg
   - assets/data/
   - assets/images/
 flr:

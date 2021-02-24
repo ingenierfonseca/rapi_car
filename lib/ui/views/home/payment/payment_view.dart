@@ -6,7 +6,6 @@ import 'package:rapi_car_app/core/services/stripe_service.dart';
 import 'package:rapi_car_app/data/tarjetas.dart';
 import 'package:rapi_car_app/ui/bloc/payment/payment_bloc.dart';
 import 'package:rapi_car_app/ui/components/total_pay_button.dart';
-import 'package:rapi_car_app/ui/util/helpers/helpers.dart';
 import 'package:rapi_car_app/ui/views/home/payment/target_view.dart';
 
 class PaymentView extends StatefulWidget {

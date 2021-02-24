@@ -81,22 +81,26 @@ class AuthService with ChangeNotifier, AppService {
   }
 
   Future<bool> isLoggedIn() async {
-    final token = await AppService.getToken();
+    try {
+      final token = await AppService.getToken();
 
-    final resp = await http.get('${Enviroment.apiUrl}/auth/renew/',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-token': token
+      final resp = await http.get('${Enviroment.apiUrl}/auth/renew/',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': token
+        }
+      );
+
+      if (resp.statusCode == 200) {
+        final loginResponse = loginResponseFromJson(resp.body);
+        this.user = loginResponse.data;
+        await saveToken(loginResponse.token);
+        return true;
+      } else {
+        this.logout();
+        return false;
       }
-    );
-
-    if (resp.statusCode == 200) {
-      final loginResponse = loginResponseFromJson(resp.body);
-      this.user = loginResponse.data;
-      await saveToken(loginResponse.token);
-      return true;
-    } else {
-      this.logout();
+    } catch (e) {
       return false;
     }
   }

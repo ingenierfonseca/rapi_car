@@ -30,7 +30,7 @@ const Color kLineColor = Color(0xFFB7B7B7);
 
 const Color kPlaceholderColor = Color(0xFFE4E4E4);
 
-class BiccosColors {
+class AppColors {
   static final Color biccosRedColor = Color.fromRGBO(200, 16, 46, 1);
   static final Color biccosBlueColor = Color.fromRGBO(0, 48, 87, 1);
   static final Color biccosGrayColor = Color.fromRGBO(112, 112, 112, 0.25);

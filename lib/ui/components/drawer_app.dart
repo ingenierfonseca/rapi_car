@@ -7,6 +7,7 @@ import 'package:rapi_car_app/core/providers/app_page_manager.dart';
 import 'package:rapi_car_app/ui/views/home/car/bussines_car_view.dart';
 
 import 'package:rapi_car_app/global/enviroment.dart';
+import 'package:rapi_car_app/ui/views/home/history/rent_car_history.dart';
 
 class DrawerApp extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class _DrawerAppState extends State<DrawerApp> {
           
           _bussinessWidget(bussinessRoles.contains(authService.user.role), context),
           
-          _createDrawerItem(icon: Icons.format_indent_decrease, text: 'Historial de Reservas'),
+          _createDrawerItem(icon: Icons.format_indent_decrease, text: 'Historial Rentas', onTap: () => context.push(page: RentCarHistory())),
           _createDrawerItem(icon: Icons.settings, text: 'Configuración'),
           _createDrawerItem(icon: Icons.offline_share, text: 'Salir', onTap: () {
             AppService.deleteToken();

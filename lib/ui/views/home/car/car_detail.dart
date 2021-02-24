@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rapi_car_app/core/models/car.dart';
+import 'package:provider/provider.dart';
+import 'package:rapi_car_app/core/models/payment.dart';
 import 'package:rapi_car_app/core/providers/app_page_manager.dart';
+import 'package:rapi_car_app/core/services/payment_service.dart';
 import 'package:rapi_car_app/ui/components/button_app.dart';
 import 'package:rapi_car_app/ui/components/card_swiper.dart';
+import 'package:rapi_car_app/ui/components/car_widget.dart';
 import 'package:rapi_car_app/ui/viewmodels/car_view_model.dart';
 import 'package:rapi_car_app/ui/viewmodels/viewmodel_page.dart';
-import 'package:rapi_car_app/ui/views/home/payment/payment_view.dart';
+import 'package:rapi_car_app/ui/views/home/payment/payment_form.dart';
 
 import '../../../../r.g.dart';
 
@@ -37,14 +41,18 @@ class _CarDetailState extends State<CarDetail> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _swiperTargets(_car),
-          _itemInfo(_car),
+          carDetailInfo(_car),
           _mapLocation(_screenSize),
           _comment(),
           Divider(color: Colors.black, height: 20),
           ButtonApp(
             text: _car.available ? 'Rentar Ahora' : 'Rentado', 
             isActive: _car.available, 
-            callback: ()=> _car.available ? context.push(page: PaymentView()) : {})
+            callback: _car.available ? () {
+              final paymentService = Provider.of<PaymentService>(context, listen: false);
+              paymentService.payment = Payment(car: _car.uui);
+              context.push(page: PaymentForm(), arguments: _car);
+            } : ()=> {})
         ],
       )
     );
@@ -59,101 +67,6 @@ class _CarDetailState extends State<CarDetail> {
         color: Colors.grey[300],
         child: Center(child: Icon(Icons.camera_alt, size: 100, color: Colors.white)),
       );
-  }
-
-  Widget _itemInfo(Car data) {
-    return Container(
-      margin: EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 20),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(data.brand),
-              SizedBox(height: 5),
-              Text(data.model, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 5),
-              Text('${_car.passengers} pasajeros'),
-              Text('${_car.fuelType}'),
-              Text('${_car.transmissionType}'),
-              Text('Motor ${_car.engine}'),
-              SizedBox(height: 5),
-              clasificationWidget(data.classification),
-              Row(
-                children: [
-                  Text('Aire acondicionado'),
-                  _car.airConditioner ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Reproductor de musica'),
-                  _car.musicPlayer ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Bluetooth'),
-                  _car.bluetooth ? Icon(Icons.done, color: Colors.pinkAccent) : Icon(Icons.not_interested),
-                ],
-              )
-              /*Row(
-                children: [
-                  for(var i = 0; i < data.classification; i++){
-                  return Icon(Icons.star, size: 15, color: Colors.pinkAccent);
-                  //Text(data.classification.toString())
-                  }
-                ],
-              )*/
-            ],
-          ),
-          _priceWidget()
-        ]
-      )
-    );
-  }
-
-  Widget clasificationWidget(int numStart)
-  {
-    List<Widget> list = new List<Widget>();
-    var dif = 10 - numStart;
-
-    for(var i = 0; i < numStart; i++){
-      list.add(Icon(Icons.star, size: 15, color: Colors.pinkAccent));
-    }
-
-    for (var j=0; j < dif; j++) {
-      list.add(Icon(Icons.star, size: 15, color: Colors.grey));
-    }
-
-    return new Row(children: list);
-  }
-
-  Widget _priceWidget() {
-    return Container(
-      //width: 100,
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-      margin: EdgeInsets.only(bottom: 10, left: 30),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ]
-      ),
-      child: Column(
-        children: [
-          Text('el día desde', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          Text('\$${_car.price}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))
-        ]
-      ),
-    );
   }
 
   Widget _mapLocation(Size _screenSize) {
@@ -174,81 +87,10 @@ class _CarDetailState extends State<CarDetail> {
                 ],
               )
             ),
-            /*Positioned(
-              bottom: 40,
-              left: 60,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, 'map_location', arguments: LatLng(37.810575, -122.477174));
-                },
-                child:Container(
-                  //width: 70,
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.pinkAccent
-                  ),
-                  child: Row(
-                    children: [
-                      Text('Ver Lugar', style: TextStyle(color: Colors.white)),
-                      Icon(Icons.keyboard_arrow_right, size: 18, color: Colors.white)
-                    ]
-                  ),
-                )
-              )
-            )*/
           ],
         ),
       )
     );
-    /*return MapboxMap( 
-      accessToken: ACCESS_TOKEN,
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: LatLng(37.810575, -122.477174),
-        zoom: 14
-      ),
-    );*/
-
-    /*return Container(
-      margin: EdgeInsets.only(left: 30, right: 30, bottom: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [ 
-          SizedBox(height: 10),
-          Text('Ubicación', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          Container(
-            height: 150,
-            child: FlutterMap(
-              options: MapOptions(
-                center: LatLng(37.810575, -122.477174),
-                zoom: 14
-              ),
-              layers: [
-                TileLayerOptions(
-                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c']
-                ),
-                MarkerLayerOptions(
-                  markers: [
-                    Marker(
-                      width: 40.0,
-                      height: 40.0,
-                      point: LatLng(37.810575, -122.477174),
-                      builder: (ctx) =>
-                      Container(
-                        child: Image(image: R.image.location_mark()),
-                      ),
-                    ),
-                  ],
-                ),
-              ]
-            )
-          )
-        ]
-      )
-    );*/
   }
 
   Widget _comment() {

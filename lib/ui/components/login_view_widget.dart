@@ -5,7 +5,8 @@ Widget generateImput({
   TextInputType textInputType = TextInputType.text,
   TextEditingController controller,
   bool obscureText = false,
-  bool validator = false
+  bool validator = false,
+  bool enabled = true
   }) {
   return Container(
     padding: EdgeInsets.only(top:10, bottom: 10, right: 10, left: 20),
@@ -22,6 +23,7 @@ Widget generateImput({
         return null;
       },
       obscureText: obscureText,
+      enabled: enabled,
     decoration: InputDecoration(
       border: InputBorder.none,
       hintText: label,
@@ -44,6 +46,23 @@ Widget generateButton({String label, VoidCallback callback}) {
       onTap: callback,
       child: Center(
         child: Text(label, style: TextStyle(color: Colors.white)),
+      )
+    ),
+  );
+}
+
+Widget generateLargeButton({String label, VoidCallback callback}) {
+  return Container(
+    height: 50,
+    margin: EdgeInsets.symmetric(horizontal: 10),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(50),
+      color: Color.fromRGBO(49, 39, 79, 1),
+    ),
+    child: GestureDetector(
+      onTap: callback,
+      child: Center(
+        child: Text(label, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
       )
     ),
   );

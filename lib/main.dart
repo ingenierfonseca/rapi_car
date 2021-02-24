@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:rapi_car_app/core/services/auth_service.dart';
 import 'package:rapi_car_app/core/services/car_service.dart';
 import 'package:rapi_car_app/core/services/config_service.dart';
+import 'package:rapi_car_app/core/services/payment_service.dart';
 import 'package:rapi_car_app/core/services/stripe_service.dart';
 import 'package:rapi_car_app/di/locator.dart';
 import 'package:rapi_car_app/r.g.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => CarService()),
         ChangeNotifierProvider(create: (_) => ConfigService()),
+        ChangeNotifierProvider(create: (_) => PaymentService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
